@@ -4,6 +4,9 @@ from django.contrib.auth import authenticate
 from django.contrib.auth import login
 from django.shortcuts import redirect
 from django.contrib import messages
+from django.contrib.auth import logout
+from .forms import RegisterForm
+from django.contrib.auth.models import User
 
 def index(request):
     # return HttpResponse("Hola mundo") # funciona con rom django.http import HttpResponse
@@ -32,4 +35,28 @@ def login_view(request):
             
     return render(request, 'users/login.html',{
         
+    })
+    
+def logout_view(request):
+    logout(request)
+    messages.success(request,'Sesion cerrada')
+    return redirect('login')
+
+def register (request):
+    form = RegisterForm(request.POST or None)
+    
+    if request.method == 'POST' and form.is_valid():
+        username = form.cleaned_data.get('username')
+        email = form.cleaned_data.get('email')
+        password = form.cleaned_data.get('password')
+        
+        user = User.objects.create_user(username, email, password)
+        if user:
+            login(request, user) # se logee el usuario que creamos
+            messages.success(request, 'usuario creado')
+            return redirect('index')
+            
+    
+    return render(request, 'users/register.html',{
+        'form': form
     })

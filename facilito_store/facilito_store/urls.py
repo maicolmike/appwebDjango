@@ -9,4 +9,6 @@ urlpatterns = [
     #definir url
     path('',views.index, name='index'),
     path('usuarios/login',views.login_view, name='login'),
+    path('usuarios/logout',views.logout_view, name='logout'),
+    path('usuarios/registro',views.register, name='register'),
 ]
