@@ -1,45 +1,24 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
-</head>
-<body>
-    <div class="container">
-        <!-- inicio de codigo mensajes-->
-        {% if messages %}
-        {% for message in messages %}
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<div class="col">
+    <h2>Login</h2>
+    <!-- formulario-->
+    <form action="" method="post">
+        {% csrf_token %}  <!--para que no genere error-->
+        <div class="form-group">
+            <label for="username">Username</label>
+            <input type="text" name="username" class="form-control">
+        </div>
+        <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" name="password" class="form-control">
+        </div>
         
-        <div class="alert alert-dismissible {% if message.tags == 'success' %}alert-success{%else%}alert-danger{%endif%}">
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            <strong>{{ message }}</strong>
-        </div>
-        {% endfor %}
-        {% endif %}
-        <!-- fin de codigo mensajes-->
-        <div class="row">
-             <div class="col">
-                <h2>Login</h2>
-                <!-- formulario-->
-                <form action="" method="post">
-                    {% csrf_token %}  <!--para que no genere error-->
-                    <div class="form-group">
-                        <label for="username">Username</label>
-                        <input type="text" name="username" class="form-control">
-                    </div>
-                    <div class="form-group">
-                        <label for="password">Password</label>
-                        <input type="password" name="password" class="form-control">
-                    </div>
-                    <br>
-                    <button type="submit" class="btn btn-primary">Login</button>
-                </form>
-             </div>
-        </div>
-    </div>
-    
-</body>
-</html>
+        <button type="submit" class="btn btn-primary">Login</button>
+    </form>
+ </div>
+
+{% endblock %}

@@ -34,6 +34,7 @@ def login_view(request):
             messages.error(request,'Usuario o contraseña incorrectos')
             
     return render(request, 'users/login.html',{
+        'title': "Login",
         
     })
     
@@ -46,11 +47,12 @@ def register (request):
     form = RegisterForm(request.POST or None)
     
     if request.method == 'POST' and form.is_valid():
-        username = form.cleaned_data.get('username')
-        email = form.cleaned_data.get('email')
-        password = form.cleaned_data.get('password')
+        #username = form.cleaned_data.get('username')
+        #email = form.cleaned_data.get('email')
+        #password = form.cleaned_data.get('password')
         
-        user = User.objects.create_user(username, email, password)
+        #user = User.objects.create_user(username, email, password)
+        user = form.save() #save () se encuentra en el archivo forms.py
         if user:
             login(request, user) # se logee el usuario que creamos
             messages.success(request, 'usuario creado')
@@ -58,5 +60,6 @@ def register (request):
             
     
     return render(request, 'users/register.html',{
-        'form': form
+        'form': form,
+        'title': "Registro",
     })
