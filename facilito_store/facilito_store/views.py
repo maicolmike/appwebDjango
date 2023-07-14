@@ -8,19 +8,22 @@ from django.contrib.auth import logout
 from .forms import RegisterForm
 from django.contrib.auth.models import User
 
+from products.models import Product
+
 def index(request):
     # return HttpResponse("Hola mundo") # funciona con rom django.http import HttpResponse
+    products = Product.objects.all().order_by('id')
+    
     return render(request, 'index.html',{
         'mensaje':"Listado de productos",
         'title': "Index dinamico",
-        'products':[{'title':'playera', 'price':5, 'stock':True},
-                    {'title':'camiseta', 'price':4, 'stock':False},
-                    {'title':'pantaloneta', 'price':8, 'stock':True},
-                    {'title':'zapatos', 'price':2, 'stock':False},
-                    ]
+        'products': products,
     })
     
 def login_view(request):
+    if request.user.is_authenticated:
+        return redirect('index')
+    
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
@@ -44,6 +47,9 @@ def logout_view(request):
     return redirect('login')
 
 def register (request):
+    if request.user.is_authenticated:
+        return redirect('index')
+    
     form = RegisterForm(request.POST or None)
     
     if request.method == 'POST' and form.is_valid():
