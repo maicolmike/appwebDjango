@@ -19,10 +19,27 @@ class ProductListView(ListView):
     
 class ProductDetailView(DetailView): #id - pk
     model = Product
-    template_name = 'products/product.html'
+    template_name = 'products/product.html' #esta fuera del snippets
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         print(context)
+
+        return context
+    
+class ProductSearchListView(ListView):
+    template_name = 'products/search.html' #esta fuera del snippets
+    
+    def get_queryset(self):
+        #SELECT * FROM products WHERE title like %valor%
+        return Product.objects.filter(title__icontains=self.query())
+    
+    def query(self):
+        return self.request.GET.get('q')
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['query'] = self.query()
+        context['count'] = context['product_list'].count() # contar resultados
 
         return context
