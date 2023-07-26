@@ -6,6 +6,8 @@ from django.views.generic.detail import DetailView
 
 from .models import Product
 
+from django.db.models import Q # poder hacer filtro multiples
+
 class ProductListView(ListView):
     template_name = 'index.html'
     queryset = Product.objects.all().order_by('id')
@@ -32,7 +34,8 @@ class ProductSearchListView(ListView):
     
     def get_queryset(self):
         #SELECT * FROM products WHERE title like %valor%
-        return Product.objects.filter(title__icontains=self.query())
+        filters = Q(title__icontains=self.query()) | Q(category__title__icontains=self.query())  # busca por el titulo del producto o por el titulo de la categoria
+        return Product.objects.filter(filters)
     
     def query(self):
         return self.request.GET.get('q')
