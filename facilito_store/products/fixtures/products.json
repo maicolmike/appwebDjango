@@ -1,0 +1,26 @@
+[
+{
+    "model": "products.product",
+    "pk": 2,
+    "fields": {
+        "title": "Playera caballero",
+        "description": "playera",
+        "price": "10.00",
+        "slug": "playera-caballero",
+        "image": "products/playera.png",
+        "created_at": "2023-07-24T16:56:51.887Z"
+    }
+},
+{
+    "model": "products.product",
+    "pk": 3,
+    "fields": {
+        "title": "Playera dama",
+        "description": "Playera ,ujer",
+        "price": "20.00",
+        "slug": "playera-dama",
+        "image": "products/playera-dama.png",
+        "created_at": "2023-07-24T22:18:32.476Z"
+    }
+}
+]
