@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'products',
     'categories',
     'users',
+    'carts',
 ]
 
 MIDDLEWARE = [
@@ -56,6 +57,9 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'facilito_store.urls'
+
+AUTH_USER_MODEL = 'users.User' #con esto ya no utilizamos el user del sistema sino el nuestro
+
 
 TEMPLATES = [
     {
