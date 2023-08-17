@@ -2,8 +2,14 @@ from django.shortcuts import render
 
 # Create your views here.
 from .models import Cart
+from .utils import get_or_create_cart
 
 def cart (request):
+    cart = get_or_create_cart(request)
+    
+    return render(request,'carts/cart.html',{
+    })
+    
     #crear la session
     ##request.session['cart_id'] = '123'
     
@@ -14,16 +20,5 @@ def cart (request):
     #eliminar una sesion 
     #request.session['cart_id'] = None
     
+    #request.session['cart_id']= None
     # obtener usuario autenticado y validar
-    user = request.user if request.user.is_authenticated else None
-    cart_id = request.session.get('cart_id')
-    
-    if cart_id:
-        cart = Cart.objects.get(pk=cart_id) #obtenemos el carrito de la base de datos
-    else:
-        cart = Cart.objects.create(user=user) # generamos el carrito de compras
-    
-    request.session['cart_id']= cart.id #actualizar la sesion
-    
-    return render(request,'carts/cart.html',{
-    })
