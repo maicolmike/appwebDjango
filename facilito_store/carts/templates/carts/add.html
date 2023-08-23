@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% load product_extras %}
+
+{% block content %}
+<div class="col-3">
+    {% if product.image %}
+    <img src="{{ product.image.url }}" alt="Imagen del prodcuto" width="200" height="200">
+    {% endif %}
+</div>
+<div class="col">
+    <div class="h3 font-weight-bold text-success">
+        Producto agredado al carrito de compras
+    </div>
+    <div class="">
+        <a href="{% url 'products:product' product.slug %}">
+            {{ product.title }}
+        </a>
+    </div>
+    <div class="h3 font-weight-bold text-danger">
+        {{ product.price | price_format }} <!--se deja | para que tome el filtro que fue creado en python/django/appwebDjango/facilito_store/products/templatetags/product_extras.py-->
+    </div>
+</div>
+{% endblock %}
