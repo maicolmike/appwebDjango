@@ -19,5 +19,8 @@
     <div class="h3 font-weight-bold text-danger">
         {{ product.price | price_format }} <!--se deja | para que tome el filtro que fue creado en python/django/appwebDjango/facilito_store/products/templatetags/product_extras.py-->
     </div>
+    <div class="mt-2">
+        <a href="{% url 'carts:cart' %}" class="btn btn-info">Ver carrito</a>
+    </div>
 </div>
 {% endblock %}
