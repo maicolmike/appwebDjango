@@ -20,6 +20,7 @@ urlpatterns = [
     path('usuarios/registro',views.register, name='register'),
     path('productos/', include('products.urls')),
     path('carrito/', include('carts.urls')),
+    path('orden/', include('orders.urls')),
 ]
 
 #condicion para mostrar las imagenes en nuestro templates
