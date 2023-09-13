@@ -15,5 +15,5 @@ def order (request):
     return render(request, 'orders/order.html', {
         'cart': cart,
         'order': order,
-        #'breadcrumb': breadcrumb()
+        'breadcrumb': breadcrumb()
     })

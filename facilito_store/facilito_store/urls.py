@@ -21,6 +21,7 @@ urlpatterns = [
     path('productos/', include('products.urls')),
     path('carrito/', include('carts.urls')),
     path('orden/', include('orders.urls')),
+    path('direcciones/', include('shipping_addresses.urls')),
 ]
 
 #condicion para mostrar las imagenes en nuestro templates
