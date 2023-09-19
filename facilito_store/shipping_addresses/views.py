@@ -2,20 +2,60 @@ from django.shortcuts import render
 
 # Create your views here.
 from django.views.generic import ListView
+from django.views.generic.edit import UpdateView
+from django.views.generic.edit import DeleteView
+
 from .models import ShippingAddress
 from .forms import ShippingAddressForm
 
 from django.shortcuts import redirect
+from django.shortcuts import reverse
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required #vista basada en funciones
+from django.contrib.auth.mixins import LoginRequiredMixin #vistas basada en clases
+from django.contrib.messages.views import SuccessMessageMixin
+from django.urls import reverse_lazy
 
-class ShippingAddressListView(ListView):
-    #login_url = 'login'
+class ShippingAddressListView(LoginRequiredMixin,ListView):
+    login_url = 'login'
     model = ShippingAddress
     template_name = 'shipping_addresses/shipping_addresses.html'
+    success_message = 'Dirección actualizada exitosamente'
     
     def get_queryset(self):
         return ShippingAddress.objects.filter(user=self.request.user).order_by('-default')
     
+class ShippingAddressUpdateView(LoginRequiredMixin, SuccessMessageMixin,UpdateView):
+    login_url = 'login'
+    model = ShippingAddress
+    form_class = ShippingAddressForm
+    template_name = 'shipping_addresses/update.html'
+    
+    def get_success_url(self):
+        return reverse('shipping_addresses:shipping_addresses')
+    
+    def dispatch(self, request, *args, **kwargs):
+        if request.user.id != self.get_object().user_id:
+            return redirect('carts:cart')
+
+        return super(ShippingAddressUpdateView, self).dispatch(request, *args, **kwargs)
+
+class ShippingAddressDeleteView(LoginRequiredMixin, DeleteView):
+    login_url = 'login'
+    model = ShippingAddress
+    template_name = 'shipping_addresses/delete.html'
+    success_url = reverse_lazy('shipping_addresses:shipping_addresses')
+    
+    def dispatch(self, request, *args, **kwargs):
+        if self.get_object().default:
+            return redirect('shipping_addresses:shipping_addresses')
+
+        if request.user.id != self.get_object().user_id:
+            return redirect('carts:cart')
+
+        return super(ShippingAddressDeleteView, self).dispatch(request, *args, **kwargs)
+
+@login_required(login_url='login')
 def create(request):
     form = ShippingAddressForm(request.POST or None)
     
