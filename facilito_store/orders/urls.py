@@ -6,4 +6,5 @@ app_name = 'orders' #para establecer rutas
 
 urlpatterns = [
     path('', views.order, name='order'),
+    path('direccion', views.address, name='address'),
 ]
