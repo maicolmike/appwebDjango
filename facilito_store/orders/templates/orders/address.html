@@ -10,8 +10,16 @@
       <div class="h3">
         Recoge el pedido en el punto de entrega
       </div>
-      <div class="h3">
+      <div class="">
         {% include 'shipping_addresses/snippets/shipping_address.html' %}
+        <div class="mt-2">
+          <a href="{% url 'orders:confirm' %}" class="btn btn-warning">Entregar a esta dirreccion</a>
+        </div>
+        {% if can_choose_address %}
+        <div class="mt-2">
+          <a href="{% url 'orders:select_address' %}">Otra direccion</a>
+        </div>
+        {% endif %}
       </div>
     {% else %}
       <div class="h3">

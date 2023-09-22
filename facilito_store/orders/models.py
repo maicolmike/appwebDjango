@@ -12,7 +12,7 @@ class OrderStatus(Enum):
     CREATED = 'CREATED'
     PAYED = 'PAYED'
     COMPLETED = 'COMPLETED'
-    CANCELLED = 'CANCELLED'
+    CANCELED = 'CANCELED'
 choices = [(tag, tag.value) for tag in OrderStatus ]
 
 class Order(models.Model):
@@ -46,6 +46,14 @@ class Order(models.Model):
         self.shipping_address = shipping_address
         self.save()
     
+    def cancel(self):
+        self.status = OrderStatus.CANCELED
+        self.save()
+    
+    def complete(self):
+        self.status = OrderStatus.COMPLETED
+        self.save()
+            
     def update_total(self):
         self.total = self.get_total()
         self.save()
