@@ -12,6 +12,7 @@ from shipping_addresses.models import ShippingAddress
 from django.contrib import messages
 from .utils import destroy_order
 from carts.utils import destroy_cart
+from .mails import Mail
 
 
 
@@ -114,6 +115,7 @@ def complete(request):
         return redirect('carts:cart')
     
     order.complete()
+    Mail.send_complete_order(order, request.user)
     
     destroy_cart(request)
     destroy_order(request)

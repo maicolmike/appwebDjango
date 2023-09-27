@@ -123,6 +123,16 @@ USE_I18N = True
 
 USE_TZ = True
 
+#para el correo
+#from decouple import config
+
+EMAIL_HOST = 'smtp.googlemail.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'maicol.yela@gmail.com'
+#EMAIL_HOST_PASSWORD = config('USER_MAIL_PASSWORD') #Env
+EMAIL_HOST_PASSWORD = 'hloc dhpm bvdw ljkf' # habilitar en 2 pasos la configuracion de gmail, claves de aplicaciones
+EMAIL_USE_TLS = True
+
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/

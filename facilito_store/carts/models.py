@@ -8,6 +8,7 @@ from django.db.models.signals import m2m_changed
 from django.db.models.signals import post_save
 import uuid
 import decimal
+from orders.common import OrderStatus
 
 class Cart(models.Model):
     cart_id = models.CharField(max_length=100, null=False, blank=False, unique=True)
@@ -42,7 +43,7 @@ class Cart(models.Model):
     
     @property
     def order(self):
-        return self.order_set.first() 
+        return self.order_set.filter(status=OrderStatus.CREATED).first()
     
 class CartProductsManager(models.Manager):
     def create_or_update_quantity(self, cart, product, quantity=1):
