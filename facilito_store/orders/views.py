@@ -5,6 +5,7 @@ from carts.utils import get_or_create_cart
 from .models import Order
 from .utils import get_or_create_order
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 from .utils import breadcrumb
 from django.shortcuts import redirect
 from django.shortcuts import get_object_or_404
@@ -13,14 +14,22 @@ from django.contrib import messages
 from .utils import destroy_order
 from carts.utils import destroy_cart
 from .mails import Mail
+from django.views.generic.list import ListView
+from django.db.models.query import EmptyQuerySet
 
+from .decorators import validate_cart_and_order
 
+class OrderListView(LoginRequiredMixin, ListView):
+    login_url = 'login'
+    template_name = 'orders/orders.html'
+
+    def get_queryset(self):
+        return self.request.user.orders_completed()
+        #return EmptyQuerySet # retorna lista vacia
 
 @login_required(login_url='login')
-def order (request):
-    cart = get_or_create_cart(request)
-    order = get_or_create_order(cart, request)
-        
+@validate_cart_and_order
+def order (request, cart , order):
     return render(request, 'orders/order.html', {
         'cart': cart,
         'order': order,
@@ -28,10 +37,8 @@ def order (request):
     })
     
 @login_required(login_url='login')
-def address(request):
-    cart = get_or_create_cart(request)
-    order = get_or_create_order(cart, request)
-    
+@validate_cart_and_order
+def address(request, cart, order):
     #shipping_address = order.shipping_address #forma de tener la dirrecion de nuestra orden
     shipping_address = order.get_or_set_shipping_address()
     can_choose_address = request.user.shippingaddress_set.count() > 1
@@ -54,11 +61,8 @@ def select_address(request):
     })
     
 @login_required(login_url='login')
-#@validate_cart_and_order
-def check_address(request, pk):
-    cart = get_or_create_cart(request)
-    order = get_or_create_order(cart,request)
-    
+@validate_cart_and_order
+def check_address(request, cart, order, pk):
     shipping_address = get_object_or_404(ShippingAddress, pk=pk)
 
     if request.user.id != shipping_address.user_id:
@@ -69,11 +73,8 @@ def check_address(request, pk):
     return redirect('orders:address')
 
 @login_required(login_url='login')
-#@validate_cart_and_order
-def confirm(request):
-    cart = get_or_create_cart(request)
-    order = get_or_create_order(cart,request)
-    
+@validate_cart_and_order
+def confirm(request, cart , order):
    # if not cart.has_products() or order.shipping_address is None or order.billing_profile is None:
        # return redirect('carts:cart')
 
@@ -89,10 +90,10 @@ def confirm(request):
     })
 
 @login_required(login_url='login')
-#@validate_cart_and_order
-def cancel(request):
-    cart = get_or_create_cart(request)
-    order = get_or_create_order(cart,request)
+@validate_cart_and_order
+def cancel(request, cart, order):
+    #cart = get_or_create_cart(request)
+    #order = get_or_create_order(cart,request)
 
     if request.user.id != order.user_id: #validadmos que el usuario sea el que creo la orden sino lo redirigimos
         return redirect('carts:cart')
@@ -106,10 +107,8 @@ def cancel(request):
     return redirect('index')
 
 @login_required(login_url='login')
-#@validate_cart_and_order
-def complete(request):
-    cart = get_or_create_cart(request)
-    order = get_or_create_order(cart,request)
+@validate_cart_and_order
+def complete(request, cart, order):
     
     if request.user.id != order.user_id:
         return redirect('carts:cart')
