@@ -18,6 +18,7 @@ from django.views.generic.list import ListView
 from django.db.models.query import EmptyQuerySet
 
 from .decorators import validate_cart_and_order
+import threading
 
 class OrderListView(LoginRequiredMixin, ListView):
     login_url = 'login'
@@ -41,7 +42,8 @@ def order (request, cart , order):
 def address(request, cart, order):
     #shipping_address = order.shipping_address #forma de tener la dirrecion de nuestra orden
     shipping_address = order.get_or_set_shipping_address()
-    can_choose_address = request.user.shippingaddress_set.count() > 1
+    #can_choose_address = request.user.shippingaddress_set.count() > 1
+    can_choose_address = request.user.has_shipping_addresses
     return render(request, 'orders/address.html', {
         'cart': cart,
         'order': order,
@@ -53,7 +55,8 @@ def address(request, cart, order):
 @login_required(login_url='login')
 def select_address(request):
     #shipping_addresses = request.user.addresses
-    shipping_addresses = request.user.shippingaddress_set.all()
+    #shipping_addresses = request.user.shippingaddress_set.all()
+    shipping_addresses = request.user.addresses
 
     return render(request, 'orders/select_address.html', {
         'breadcrumb': breadcrumb(address=True),
@@ -114,7 +117,12 @@ def complete(request, cart, order):
         return redirect('carts:cart')
     
     order.complete()
-    Mail.send_complete_order(order, request.user)
+    #enviar correos de forma asyncrona
+    thread = threading.Thread(target=Mail.send_complete_order, args=(
+        order, request.user
+    ))
+    thread.start()
+    #Mail.send_complete_order(order, request.user)
     
     destroy_cart(request)
     destroy_order(request)
