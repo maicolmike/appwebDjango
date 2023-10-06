@@ -2,4 +2,9 @@ from django.contrib import admin
 
 # Register your models here.
 from .models import PromoCode
-admin.site.register(PromoCode)
+
+
+class PromoCodeAdmin(admin.ModelAdmin):
+    exclude = ['code']
+    
+admin.site.register(PromoCode,PromoCodeAdmin)
