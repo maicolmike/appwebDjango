@@ -19,7 +19,7 @@ class PromoCode(models.Model):
         return self.code
 
     def use(self):
-        #self.used = True
+        self.used = True
         self.save()
         
 def set_code(sender, instance, *args, **kwargs):
