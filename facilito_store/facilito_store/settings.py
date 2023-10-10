@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'orders',
     'shipping_addresses',
     'promo_codes',
+    'billing_profiles',
 ]
 
 MIDDLEWARE = [
@@ -134,6 +135,9 @@ EMAIL_HOST_USER = 'maicol.yela@gmail.com'
 #EMAIL_HOST_PASSWORD = config('USER_MAIL_PASSWORD') #Env
 EMAIL_HOST_PASSWORD = 'hloc dhpm bvdw ljkf' # habilitar en 2 pasos la configuracion de gmail, claves de aplicaciones
 EMAIL_USE_TLS = True
+
+STRIPE_PUBLIC_KEY = 'pk_test_51NzmnIIufUONhdIF48eHOPpEMTr05UuAetJY0egnNcHc8sJOS9wY2iEiYDX4eU4a37LC6ofAP986cYMJAmDtjm6q00JdfJk179'
+STRIPE_PRIVATE_KEY = 'sk_test_51NzmnIIufUONhdIFIiCwpY7L5wmqtSSn20deLMcTf1yCd5nO6yU7iXgSmhu1mqTeb7rHDE5REBt6xJovxGLymmVW00P3evdZ3w'
 
 
 # Static files (CSS, JavaScript, Images)

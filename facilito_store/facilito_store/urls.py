@@ -23,6 +23,7 @@ urlpatterns = [
     path('orden/', include('orders.urls')),
     path('direcciones/', include('shipping_addresses.urls')),
     path('codigos/', include('promo_codes.urls')),
+    path('pagos/', include('billing_profiles.urls')),
 ]
 
 #condicion para mostrar las imagenes en nuestro templates

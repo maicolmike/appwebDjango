@@ -4,6 +4,7 @@
 {% url 'carts:cart' as cart %} <!-- appwebDjango/facilito_store/carts/urls.py-->
 {% url 'shipping_addresses:shipping_addresses' as shipping_addresses %}
 {% url 'orders:completeds' as completeds %}
+{% url 'billing_profiles:create' as billing_profiles %}
 
 <nav class="navbar navbar-expand-md bg-success navbar-dark">
     
@@ -26,6 +27,10 @@
 
                 <li class="nav-item {% if request.path == completeds %} active{% endif %}">
                     <a class="nav-link" href="{{ completeds }}">Mis pedidos <span class="fas fa-shipping-fast"></span> </a>
+                </li>
+
+                <li class="nav-item {% if request.path == billing_profiles %} active{% endif %}">
+                    <a class="nav-link" href="{{ billing_profiles }}">Mis metodos de pago <span class="fas fa-cc-stripe"></span> </a>
                 </li>
 
             {% endif %}
