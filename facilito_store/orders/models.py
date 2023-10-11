@@ -11,6 +11,7 @@ from .common import OrderStatus
 from .common import choices
 from promo_codes.models import PromoCode
 import decimal
+from billing_profiles.models import BillingProfile
 
 class Order(models.Model):
     order_id = models.CharField(max_length=100, null=False, blank= False, unique=True)
@@ -25,6 +26,8 @@ class Order(models.Model):
                                         on_delete=models.CASCADE)
     promo_code = models.OneToOneField(PromoCode, null=True, blank=True,
                                         on_delete=models.CASCADE)
+    billing_profile = models.ForeignKey(BillingProfile, null=True, blank=True,
+                                        on_delete=models.CASCADE)
     
     def __str__(self):
         return self.order_id
@@ -36,6 +39,16 @@ class Order(models.Model):
 
             self.update_total()
             promo_code.use()
+            
+    def get_or_set_billing_profile(self):
+        if self.billing_profile:
+            return self.billing_profile
+
+        billing_profile = self.user.billing_profile
+        if billing_profile:
+            self.update_billing_profile(billing_profile)
+
+        return billing_profile
     
     def get_or_set_shipping_address(self):
         if self.shipping_address:
@@ -49,6 +62,10 @@ class Order(models.Model):
 
         return shipping_address
     
+    def update_billing_profile(self, billing_profile):
+        self.billing_profile = billing_profile
+        self.save()
+        
     def update_shipping_address(self, shipping_address):
         self.shipping_address = shipping_address
         self.save()

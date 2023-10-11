@@ -3,9 +3,9 @@ from django.db import models
 # Create your models here.
 from users.models import User
 
-#from stripeAPI.card import create_card
+from stripeAPI.card import create_card
 
-'''class BillingProfileManager(models.Manager):
+class BillingProfileManager(models.Manager):
 
     def create_by_stripe_token(self, user, stripe_token):
         if user.has_customer() and stripe_token:
@@ -17,7 +17,7 @@ from users.models import User
                                 brand=source.brand,
                                 user=user,
                                 default=not user.has_billing_profiles())
-'''
+
 class BillingProfile(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     token = models.CharField(max_length=50, null=False, blank=False)
@@ -27,7 +27,7 @@ class BillingProfile(models.Model):
     default = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
-    #objects = BillingProfileManager()
+    objects = BillingProfileManager()
 
     def __str__(self):
         return self.card_id

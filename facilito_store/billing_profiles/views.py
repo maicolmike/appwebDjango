@@ -11,6 +11,13 @@ from django.contrib.auth.decorators import login_required
 
 from .models import BillingProfile
 
+class BillingProfileListView(LoginRequiredMixin, ListView):
+    login_url = 'login'
+    template_name = 'billing_profiles/billing_profiles.html'
+
+    def get_queryset(self):
+        return self.request.user.billing_profiles
+
 @login_required(login_url='login')
 def create(request):
 
