@@ -1,24 +1,34 @@
 from django.shortcuts import render
 
 # Create your views here.
-from carts.utils import get_or_create_cart
-from .models import Order
-from .utils import get_or_create_order
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth.mixins import LoginRequiredMixin
-from .utils import breadcrumb
+import threading
+from django.contrib import messages
+
 from django.shortcuts import redirect
 from django.shortcuts import get_object_or_404
-from shipping_addresses.models import ShippingAddress
-from django.contrib import messages
+
+from django.db import transaction
+
+from .utils import breadcrumb
 from .utils import destroy_order
+from .utils import get_or_create_order
+
 from carts.utils import destroy_cart
+from carts.utils import get_or_create_cart
+
 from .mails import Mail
-from django.views.generic.list import ListView
+
+from .models import Order
+from charges.models import Charge
+from shipping_addresses.models import ShippingAddress
+
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
+
 from django.db.models.query import EmptyQuerySet
+from django.views.generic.list import ListView
 
 from .decorators import validate_cart_and_order
-import threading
 
 class OrderListView(LoginRequiredMixin, ListView):
     login_url = 'login'
@@ -31,6 +41,9 @@ class OrderListView(LoginRequiredMixin, ListView):
 @login_required(login_url='login')
 @validate_cart_and_order
 def order (request, cart , order):
+    if not cart.has_products():
+        return redirect('carts:cart')
+
     return render(request, 'orders/order.html', {
         'cart': cart,
         'order': order,
@@ -40,10 +53,12 @@ def order (request, cart , order):
 @login_required(login_url='login')
 @validate_cart_and_order
 def address(request, cart, order):
-    #shipping_address = order.shipping_address #forma de tener la dirrecion de nuestra orden
+    if not cart.has_products():
+        return redirect('carts:cart')
+
     shipping_address = order.get_or_set_shipping_address()
-    #can_choose_address = request.user.shippingaddress_set.count() > 1
-    can_choose_address = request.user.has_shipping_addresses
+    can_choose_address = request.user.has_shipping_addresses()
+
     return render(request, 'orders/address.html', {
         'cart': cart,
         'order': order,
@@ -51,6 +66,7 @@ def address(request, cart, order):
         'can_choose_address': can_choose_address,
         'breadcrumb': breadcrumb(address=True)
     })
+
     
 @login_required(login_url='login')
 def select_address(request):
@@ -79,8 +95,8 @@ def check_address(request, cart, order, pk):
 @validate_cart_and_order
 def payment(request, cart, order):
 
-   # if not cart.has_products() or order.shipping_address is None:
-       # return redirect('carts:cart')
+    if not cart.has_products() or order.shipping_address is None:
+        return redirect('carts:cart')
 
     billing_profile = order.get_or_set_billing_profile()
 
@@ -93,9 +109,10 @@ def payment(request, cart, order):
     
 @login_required(login_url='login')
 @validate_cart_and_order
-def confirm(request, cart , order):
-   # if not cart.has_products() or order.shipping_address is None or order.billing_profile is None:
-       # return redirect('carts:cart')
+def confirm(request, cart, order):
+
+    if not cart.has_products() or order.shipping_address is None or order.billing_profile is None:
+        return redirect('carts:cart')
 
     shipping_address = order.shipping_address
     if shipping_address is None:
@@ -105,7 +122,7 @@ def confirm(request, cart , order):
         'cart': cart,
         'order': order,
         'shipping_address': shipping_address,
-        'breadcrumb': breadcrumb(address=True, payment= True, confirmation=True)
+        'breadcrumb': breadcrumb(address=True, payment=True, confirmation=True)
     })
 
 @login_required(login_url='login')
@@ -131,21 +148,8 @@ def complete(request, cart, order):
     
     if request.user.id != order.user_id:
         return redirect('carts:cart')
-    
-    order.complete()
-    #enviar correos de forma asyncrona
-    thread = threading.Thread(target=Mail.send_complete_order, args=(
-        order, request.user
-    ))
-    thread.start()
-    #Mail.send_complete_order(order, request.user)
-    
-    destroy_cart(request)
-    destroy_order(request)
 
-    messages.success(request, 'Compra completada exitosamente')
-    
-    """charge = Charge.objects.create_charge(order)
+    charge = Charge.objects.create_charge(order)
     if charge:
         with transaction.atomic():
             order.complete()
@@ -158,5 +162,5 @@ def complete(request, cart, order):
             destroy_order(request)
 
             messages.success(request, 'Compra completada exitosamente')
-    """
+
     return redirect('index')
