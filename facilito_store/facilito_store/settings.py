@@ -89,16 +89,24 @@ WSGI_APPLICATION = 'facilito_store.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-DATABASES = {
+'''DATABASES = {
     'default': {
         #'ENGINE': 'django.db.backends.sqlite3',
         #'NAME': BASE_DIR / 'db.sqlite3',
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'facilito_store',
+        'NAME': 'facilito_store2',
         'USER': 'root',
-        'PASSWORD': '',
+        'PASSWORD': 'Cootep2023',
         'HOST': 'localhost',
-        'PORT': '',
+        'PORT': '3306',
+    }
+}'''
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.mysql",
+        "OPTIONS": {
+            "read_default_file": "/home/cootep/Documentos/programacion/Django/appwebDjango/facilito_store/my.cnf",
+        },
     }
 }
 
